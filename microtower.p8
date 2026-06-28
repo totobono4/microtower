@@ -44,6 +44,7 @@ function _draw()
  draw_particles()
  draw_player()
  draw_entities()
+ draw_score()
  
  debug()
  
@@ -733,6 +734,16 @@ function draw_player()
 		p.s.x,p.s.y,p.s.w,p.s.h,
 		p.o.x,p.o.y
 	)
+end
+
+function draw_score()
+	local c=7
+	if #high_score>0 then
+		if score>high_score[1] then
+			c=10
+		end
+	end
+	print("score "..score,90,0,c)
 end
 
 function draw_menu()
