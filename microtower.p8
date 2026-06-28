@@ -92,10 +92,17 @@ p_dat={
 			if not e.killable then
 				goto skiprocketcollide
 			end
-			if self.xmin<e.xmax and
-						self.xmax>e.xmin and
-						self.ymin<e.ymax and
-						self.ymax>e.ymin
+			if (
+				self.xmin<e.xmax and
+				self.xmax>e.xmin and
+				self.ymin<e.ymax and
+				self.ymax>e.ymin
+				) or (
+				self.xmin-128<e.xmax and
+				self.xmax-128>e.xmin and
+				self.ymin<e.ymax and
+				self.ymax>e.ymin
+				)
 			then
 				del(tower.e, e)
 				collided=true
@@ -111,7 +118,7 @@ p_dat={
 		
 		local y=cos(self.dir+self.rot)*speed.y
 		local x=sin(self.dir+self.rot)
-		if y>-.5 and y<.5 then
+		if y>-.5*speed.y and y<.5*speed.y then
 			del(tower.e,self)
 		end
 		
@@ -226,9 +233,7 @@ lvls = {
 		s={
 			[100]=function()
 				spawn_enemy(0,90)
-				spawn_enemy(32,90)
 				spawn_enemy(64,90)
-				spawn_enemy(92,90)
 			end
 		},
 	}
@@ -298,7 +303,7 @@ end
 
 function move(mv)
 	tower.p.x+=mv.x*speed.x
-	tower.p.x%=256
+	tower.p.x%=128
 	tower.p.y+=(1*speed.y)
 end
 
