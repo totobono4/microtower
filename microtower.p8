@@ -25,7 +25,7 @@ function _update()
 	update_particles()
 	
 	if hit() then
-		//gameover()
+		gameover()
 	end
 	
 	::skipupdate::
