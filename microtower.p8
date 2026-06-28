@@ -28,6 +28,10 @@ function _update()
 		gameover()
 	end
 	
+	if game_end then
+		end_game()
+	end
+	
 	::skipupdate::
 end
 
@@ -51,6 +55,12 @@ function _draw()
 end
 
 function debug()
+	if game_end then
+		print("game_end")
+	end
+	if game_ended then
+		print("game_ended")
+	end
 end
 
 -->8
@@ -393,7 +403,8 @@ lvls = {
 		e={},
 		s={
 			[10]=function()
-				spawn_enemy(0,90,p_ids.plus,hp.e,false,cd.fast)			end,
+				spawn_enemy(0,90,p_ids.plus,hp.e,false,cd.fast)
+			end,
 			[300]=function()
 				spawn_enemy(32,120,p_ids.plus,hp.t,true,cd.med)
 				spawn_enemy(96,120,p_ids.plus,hp.t,true,cd.med)
@@ -511,6 +522,7 @@ lvls = {
 			[3300]=function()
 				spawn_enemy(0,90,p_ids.cross,hp.b,false,cd.ult)
 				spawn_enemy(0,90,p_ids.tri,hp.b,false,cd.ult)
+				game_end=true
 			end,
 		},
 		particles={}
@@ -532,6 +544,11 @@ game_launched=false
 max_scores=3
 score=0
 high_score={}
+
+game_end=false
+game_end_time=0
+game_ended=false
+game_end_cd=1
 -->8
 -- base functions
 
@@ -598,6 +615,8 @@ function load_level(n)
 	}
 	
 	reset_score()
+	game_end=false
+	game_ended=false
 end
 
 -->8
@@ -710,6 +729,27 @@ end
 function gameover()
 	register_highscore(score,0)
 	back_to_menu()
+end
+
+function end_game()
+	if not game_ended then
+		local enemies=0
+		for e in all(tower.e) do
+			if e.id==e_ids.enemy then
+				enemies+=1
+			end
+		end
+	
+		if enemies==0 then
+			game_end_time=game_time
+			game_ended=true
+		end
+	end
+	if game_ended then
+		if game_time==(game_end_time+game_end_cd) then
+			gameover()
+		end
+	end
 end
 
 -->8
