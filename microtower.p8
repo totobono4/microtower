@@ -25,8 +25,7 @@ function _update()
 	update_particles()
 	
 	if hit() then
-		register_highscore(score,0)
-		back_to_menu()
+		gameover()
 	end
 	
 	::skipupdate::
@@ -631,6 +630,11 @@ function register_highscore(new_score,j)
 		end
 	end
 	::endhighscore::
+end
+
+function gameover()
+	register_highscore(score,0)
+	back_to_menu()
 end
 
 -->8
