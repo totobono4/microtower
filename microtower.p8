@@ -25,7 +25,7 @@ function _update()
 	update_particles()
 	
 	if hit() then
-		gameover()
+		//gameover()
 	end
 	
 	::skipupdate::
@@ -375,6 +375,7 @@ players={
 hp={
 	t=5,
 	e=5,
+	b=250,
 }
 
 cd={
@@ -459,11 +460,57 @@ lvls = {
 				spawn_enemy(80,120,p_ids.cross,hp.t,true,cd.fast)
 				spawn_enemy(112,120,p_ids.cross,hp.t,true,cd.fast)
 			end,
-			[2150]=function()
+			[550]=function()
+				spawn_enemy(0,90,p_ids.tri,hp.e,false,cd.fast)
+				spawn_enemy(32,90,p_ids.tri,hp.e,false,cd.fast)
+				spawn_enemy(64,90,p_ids.tri,hp.e,false,cd.fast)
+				spawn_enemy(96,90,p_ids.tri,hp.e,false,cd.fast)
+			end,
+			[2100]=function()
 				spawn_enemy(0,120,p_ids.cross,hp.t,true,cd.fast)
 				spawn_enemy(32,120,p_ids.cross,hp.t,true,cd.fast)
 				spawn_enemy(64,120,p_ids.cross,hp.t,true,cd.fast)
 				spawn_enemy(96,120,p_ids.cross,hp.t,true,cd.fast)
+			end,
+			[2300]=function()
+				spawn_enemy(16,120,p_ids.cross,hp.t,true,cd.fast)
+				spawn_enemy(48,120,p_ids.cross,hp.t,true,cd.fast)
+				spawn_enemy(80,120,p_ids.cross,hp.t,true,cd.fast)
+				spawn_enemy(112,120,p_ids.cross,hp.t,true,cd.fast)
+			end,
+			[2400]=function()
+				spawn_enemy(0,120,p_ids.cross,hp.t,true,cd.fast)
+				spawn_enemy(32,120,p_ids.cross,hp.t,true,cd.fast)
+				spawn_enemy(64,120,p_ids.cross,hp.t,true,cd.fast)
+				spawn_enemy(96,120,p_ids.cross,hp.t,true,cd.fast)
+			end,
+			[2500]=function()
+				spawn_enemy(16,120,p_ids.cross,hp.t,true,cd.fast)
+				spawn_enemy(48,120,p_ids.cross,hp.t,true,cd.fast)
+				spawn_enemy(80,120,p_ids.cross,hp.t,true,cd.fast)
+				spawn_enemy(112,120,p_ids.cross,hp.t,true,cd.fast)
+			end,
+			[2800]=function()
+				spawn_enemy(0,120,p_ids.tri,hp.t,true,cd.med)
+				spawn_enemy(32,120,p_ids.cross,hp.t,true,cd.med)
+				spawn_enemy(64,120,p_ids.tri,hp.t,true,cd.med)
+				spawn_enemy(96,120,p_ids.cross,hp.t,true,cd.med)
+			end,
+			[2900]=function()
+				spawn_enemy(16,120,p_ids.cross,hp.t,true,cd.med)
+				spawn_enemy(48,120,p_ids.tri,hp.t,true,cd.med)
+				spawn_enemy(80,120,p_ids.cross,hp.t,true,cd.med)
+				spawn_enemy(112,120,p_ids.tri,hp.t,true,cd.med)
+			end,
+			[3000]=function()
+				spawn_enemy(0,120,p_ids.cross,hp.t,true,cd.fast)
+				spawn_enemy(32,120,p_ids.star,hp.t,true,cd.med)
+				spawn_enemy(64,120,p_ids.cross,hp.t,true,cd.fast)
+				spawn_enemy(96,120,p_ids.star,hp.t,true,cd.med)
+			end,
+			[3300]=function()
+				spawn_enemy(0,90,p_ids.cross,hp.b,false,cd.ult)
+				spawn_enemy(0,90,p_ids.tri,hp.b,false,cd.ult)
 			end,
 		},
 		particles={}
