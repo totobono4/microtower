@@ -51,7 +51,6 @@ function _draw()
 end
 
 function debug()
-	print("particles "..#tower.particles)
 end
 
 -->8
@@ -59,7 +58,8 @@ end
 
 b_ids={
 	pipe=1,
-	window=2
+	window=2,
+	lightwindow=3,
 }
 
 b_dat={
@@ -79,6 +79,14 @@ b_dat={
 			h=8,
 		}
 	},
+	[b_ids.lightwindow]={
+		s={
+			x=15*8,
+			y=1*8,
+			w=8,
+			h=8,
+		}
+	},
 }
 
 s_ids={
@@ -89,7 +97,7 @@ s_ids={
 	bullet_b=5,
 	bullet_p=6,
 	bullet_y=7,
-	bullet_0=8,
+	bullet_o=8,
 	bullet_g=9,
 	bullet_s=10,
 	bullet_h=11,
@@ -146,7 +154,7 @@ s_dat={
 		w=8,
 		h=8,
 	},
-	[s_ids.bullet_0]={
+	[s_ids.bullet_o]={
 		x=7*8,
 		y=1*8,
 		w=8,
@@ -259,32 +267,32 @@ p_dat={
 	[p_ids.plus]=function(self)		
 		if game_time-self.b_last>=self.b_cd then
 			self.b_last=game_time
-			spawn_bullet(self,0,0,s_dat[s_ids.bullet_y])
-			spawn_bullet(self,.25,0,s_dat[s_ids.bullet_y])
-			spawn_bullet(self,.5,0,s_dat[s_ids.bullet_y])
-			spawn_bullet(self,.75,0,s_dat[s_ids.bullet_y])
+			spawn_bullet(self,0,0,s_dat[s_ids.bullet_o])
+			spawn_bullet(self,.25,0,s_dat[s_ids.bullet_o])
+			spawn_bullet(self,.5,0,s_dat[s_ids.bullet_o])
+			spawn_bullet(self,.75,0,s_dat[s_ids.bullet_o])
 		end
 	end,
 	[p_ids.cross]=function(self)		
 		if game_time-self.b_last>=self.b_cd then
 			self.b_last=game_time
-			spawn_bullet(self,.125,0,s_dat[s_ids.bullet_y])
-			spawn_bullet(self,.375,0,s_dat[s_ids.bullet_y])
-			spawn_bullet(self,.625,0,s_dat[s_ids.bullet_y])
-			spawn_bullet(self,.875,0,s_dat[s_ids.bullet_y])
+			spawn_bullet(self,.125,0,s_dat[s_ids.bullet_o])
+			spawn_bullet(self,.375,0,s_dat[s_ids.bullet_o])
+			spawn_bullet(self,.625,0,s_dat[s_ids.bullet_o])
+			spawn_bullet(self,.875,0,s_dat[s_ids.bullet_o])
 		end
 	end,
 	[p_ids.star]=function(self)		
 		if game_time-self.b_last>=self.b_cd then
 			self.b_last=game_time
-			spawn_bullet(self,0,0,s_dat[s_ids.bullet_y])
-			spawn_bullet(self,.25,0,s_dat[s_ids.bullet_y])
-			spawn_bullet(self,.5,0,s_dat[s_ids.bullet_y])
-			spawn_bullet(self,.75,0,s_dat[s_ids.bullet_y])
-			spawn_bullet(self,.125,0,s_dat[s_ids.bullet_y])
-			spawn_bullet(self,.375,0,s_dat[s_ids.bullet_y])
-			spawn_bullet(self,.625,0,s_dat[s_ids.bullet_y])
-			spawn_bullet(self,.875,0,s_dat[s_ids.bullet_y])
+			spawn_bullet(self,0,0,s_dat[s_ids.bullet_o])
+			spawn_bullet(self,.25,0,s_dat[s_ids.bullet_o])
+			spawn_bullet(self,.5,0,s_dat[s_ids.bullet_o])
+			spawn_bullet(self,.75,0,s_dat[s_ids.bullet_o])
+			spawn_bullet(self,.125,0,s_dat[s_ids.bullet_o])
+			spawn_bullet(self,.375,0,s_dat[s_ids.bullet_o])
+			spawn_bullet(self,.625,0,s_dat[s_ids.bullet_o])
+			spawn_bullet(self,.875,0,s_dat[s_ids.bullet_o])
 			p_dat[p_ids.cross](self)
 		end
 	end,
@@ -334,21 +342,21 @@ maps={
 		cy=0,
 		sx=0,
 		sy=0,
-		cw=32,
+		cw=16,
 		ch=16,
 	}
 }
 
 buildings={
 	default={
-		[8]={1,1,1,2,1,1,2,1},
-		[7]={2,2,2,2,1,1,2,2},
-		[6]={1,1,1,2,2,2,2,1},
-		[5]={2,2,2,2,2,1,2,2},
-		[4]={1,1,1,1,2,2,2,1},
-		[3]={2,2,2,2,2,1,2,1},
-		[2]={2,1,1,1,2,1,2,1},
-		[1]={2,2,2,2,2,2,2,2},
+		[8]={1,1,2,2,2,1,1,1},
+		[7]={1,1,1,2,2,2,2,1},
+		[6]={1,1,1,1,1,2,2,1},
+		[5]={2,1,1,1,1,1,2,2},
+		[4]={2,2,1,1,1,1,2,2},
+		[3]={2,2,2,1,1,2,2,2},
+		[2]={1,2,2,2,2,2,2,1},
+		[1]={1,1,2,2,2,1,1,1},
 	}
 }
 
@@ -732,10 +740,6 @@ function update_inputs()
 		mv.x/=2
 		spawn_rocket()
 	end
-	if btn(🅾️) then
-		local p=tower.p
-		spawn_particle(p.x,p.y+80,s_dat[s_ids.explosion],1)
-	end
 	
 	move(mv)
 end
@@ -790,13 +794,13 @@ __gfx__
 0000000070dddd07aa9aa9aa76655667768888670000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000078877887faf99faff778877ffaa77aaf0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 11111111ffffffffffffffff1cccccc1ffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000
-11111111fff77fffff8888ffcc1111ccffccccffffeeeeffffaaaaffff9999ffff6666ffffddddffffbbbbff0000000000000000000000000000000000000000
-11111111ff7777fff887788fc1c11c1cfcc77ccffee77eeffaa77aaff997799ff667766ffdd77ddffbbbbbbf0000000000000000000000000000000000000000
-11111111ff6666fff877778fc11cc11cfc7777cffe7777effa7777aff977779ff677776ffd7777dffbbbbbbf0000000000000000000000000000000000000000
-11111111ff8787fff877778fc11cc11cfc7777cffe7777effa7777aff977779ff677776ffd7777dffbbbbbbf0000000000000000000000000000000000000000
-11111111ff7878fff887788fc1c11c1cfcc77ccffee77eeffaa77aaff997799ff667766ffdd77ddffbbbbbbf0000000000000000000000000000000000000000
-11111111ff8787ffff8888ffcc1111ccffccccffffeeeeffffaaaaffff9999ffff6666ffffddddffffbbbbff0000000000000000000000000000000000000000
-11111111ff9999ffffffffff1cccccc1ffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000
+11111111fff77fffff8888ffcc1111ccffccccffffeeeeffffaaaaffff9999ffff6666ffffddddffffbbbbff000000000000000000000000000000000aa9aa00
+11111111ff7777fff887788fc1c11c1cfcc77ccffee77eeffaa77aaff997799ff667766ffdd77ddffbbbbbbf000000000000000000000000000000000aaa9a00
+11111111ff6666fff877778fc11cc11cfc7777cffe7777effa7777aff977779ff677776ffd7777dffbbbbbbf000000000000000000000000000000000aaaaa00
+11111111ff8787fff877778fc11cc11cfc7777cffe7777effa7777aff977779ff677776ffd7777dffbbbbbbf000000000000000000000000000000000aaaaa00
+11111111ff7878fff887788fc1c11c1cfcc77ccffee77eeffaa77aaff997799ff667766ffdd77ddffbbbbbbf0000000000000000000000000000000009aa9a00
+11111111ff8787ffff8888ffcc1111ccffccccffffeeeeffffaaaaffff9999ffff6666ffffddddffffbbbbff000000000000000000000000000000000a9aa900
+11111111ff9999ffffffffff1cccccc1ffffffffffffffffffffffffffffffffffffffffffffffffffffffff000000000000000000000000000000000aa9aa00
 11111111111111111111111111111111111111111111111111111111111111111111111100000000000000000000000000000000000000000000000000000000
 11111111111100011111111111110001111111111111111111111111111111111111111100000000000000000000000000000000000000000000000005505500
 1111111111110a011111111111110a01000000000000000000000111000001110111111100000000000000000000000000000000000000000000000005550500
