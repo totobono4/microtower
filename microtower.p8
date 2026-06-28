@@ -22,6 +22,7 @@ function _update()
 	update_inputs()
 	update_events()
 	update_entities()
+	update_particles()
 	
 	if hit() then
 		register_highscore(score,0)
@@ -40,6 +41,7 @@ function _draw()
  
  draw_map()
  draw_blocs()
+ draw_particles()
  draw_player()
  draw_entities()
  
@@ -49,6 +51,7 @@ function _draw()
 end
 
 function debug()
+	print("particles "..#tower.particles)
 end
 
 -->8
@@ -90,6 +93,7 @@ s_ids={
 	bullet_g=9,
 	bullet_s=10,
 	bullet_h=11,
+	explosion=12,
 }
 
 s_dat={
@@ -156,6 +160,12 @@ s_dat={
 	[s_ids.bullet_h]={
 		x=10*8,
 		y=1*8,
+		w=8,
+		h=8,
+	},
+	[s_ids.explosion]={
+		x=2*8,
+		y=0*8,
 		w=8,
 		h=8,
 	},
@@ -387,6 +397,7 @@ lvls = {
 				spawn_enemy(96,120,p_ids.star,10,true,1)
 			end,
 		},
+		particles={}
 	}
 }
 
@@ -434,6 +445,21 @@ function new_entity(e)
 	}
 end
 
+function new_particle(particle)
+	return {
+		spawn_time=game_time,
+		x=particle.x,
+		y=particle.y,
+		s=particle.s,
+		last=particle.last,
+		process=function(self)
+			if self.spawn_time+self.last<game_time then
+				del(tower.particles, self)
+			end
+		end
+	}
+end
+
 function load_level(n)
 	local entities={}
 	
@@ -452,6 +478,7 @@ function load_level(n)
 		b={unpack(lvls[n+1].b)},
 		e=entities,
 		s=lvls[n+1].s,
+		particles={}
 	}
 	
 	reset_score()
@@ -514,6 +541,17 @@ function spawn_enemy(x,y,p_id,health,attached,cd)
 	enemy.b_cd=cd
 	update_collider(enemy)
 	add(tower.e,enemy)
+end
+
+function spawn_particle(x,y,sprite,last)
+	local particle=new_particle({
+		x=x,
+		y=y,
+		s=sprite,
+		last=last,
+	})
+	
+	add(tower.particles,particle)
 end
 
 function launch_game()
@@ -606,33 +644,43 @@ function draw_blocs()
 end
 
 function draw_entities()
-	local p=tower.p
 	for e in all(tower.e) do
-		local rotation=cos((-p.x+e.x)/128)
-		local position=-sin((-p.x+e.x)/128)*tower_thickness*3.14
-	
-		if rotation<0 then
-			goto skipdrawentity
-		end
-	
-		local xw=rotation*e.s.w
-		local xpos=position*e.s.w
-		local ypos=p.y-e.y
-		
-		local dx=p.o.x+xpos
-		local dy=p.o.y+ypos
-
-		if dy<-7 or dy>128 then
-			goto skipdrawentity
-		end
-
- 	sspr(
- 		e.s.x,e.s.y,e.s.w,e.s.h,
- 		dx,dy,xw,e.s.h
- 	)
- 	
- 	::skipdrawentity::
+		draw_element(e)
  end
+end
+
+function draw_particles()
+	for p in all(tower.particles) do
+		draw_element(p)
+	end
+end
+
+function draw_element(e)
+	local p=tower.p
+	local rotation=cos((-p.x+e.x)/128)
+	local position=-sin((-p.x+e.x)/128)*tower_thickness*3.14
+
+	if rotation<0 then
+		goto skipdrawelement
+	end
+
+	local xw=rotation*e.s.w
+	local xpos=position*e.s.w
+	local ypos=p.y-e.y
+	
+	local dx=p.o.x+xpos
+	local dy=p.o.y+ypos
+
+	if dy<-7 or dy>128 then
+		goto skipdrawelement
+	end
+
+	sspr(
+		e.s.x,e.s.y,e.s.w,e.s.h,
+		dx,dy,xw,e.s.h
+	)
+	
+	::skipdrawelement::
 end
 
 function draw_player()
@@ -646,7 +694,7 @@ end
 function draw_menu()
 	map(32,0,0,0,16,16)
 	if #high_score>0 then
-		print("highscores",70,32)
+		print("highscores",70,100,10)
 		for highscore in all(high_score) do
 			print(highscore)
 		end
@@ -671,6 +719,10 @@ function update_inputs()
 	if btn(❎) then
 		mv.x/=2
 		spawn_rocket()
+	end
+	if btn(🅾️) then
+		local p=tower.p
+		spawn_particle(p.x,p.y+80,s_dat[s_ids.explosion],1)
 	end
 	
 	move(mv)
@@ -708,6 +760,12 @@ function update_events()
 	local s=tower.s
 	if tower.s[p.y]!=nil then
 		tower.s[p.y]()
+	end
+end
+
+function update_particles()
+	for particle in all(tower.particles) do
+		particle.process(particle)
 	end
 end
 __gfx__
