@@ -24,6 +24,7 @@ function _update()
 	update_entities()
 	
 	if hit() then
+		register_highscore(score,0)
 		back_to_menu()
 	end
 	
@@ -31,12 +32,11 @@ function _update()
 end
 
 function _draw()
+	cls()
 	if not game_launched then
-		map(32,0,0,0,8,8)
+		draw_menu()
 		goto skipdraw
 	end
-
- cls()
  
  draw_map()
  draw_blocs()
@@ -197,8 +197,10 @@ p_dat={
 				self.ymax>e.ymin
 				)
 			then
+				scoring(1)
 				e.health-=1
 				if e.health<=0 then
+					scoring(10)
 					del(tower.e,e)
 				end
 				collided=true
@@ -400,6 +402,9 @@ tower_thickness=1.5
 
 game_launched=false
 
+max_scores=3
+score=0
+high_score={}
 -->8
 -- base functions
 
@@ -449,6 +454,7 @@ function load_level(n)
 		s=lvls[n+1].s,
 	}
 	
+	reset_score()
 end
 
 -->8
@@ -519,6 +525,29 @@ end
 function back_to_menu()
 	music()
 	game_launched=false	
+end
+
+function reset_score()
+	score=0
+end
+
+function scoring(n)
+	score+=n
+end
+
+function register_highscore(new_score,j)
+ for i=j,max_scores-1 do
+		if high_score[i+1]==nil then
+			high_score[i+1]=new_score
+			goto endhighscore
+		end
+		if high_score[i+1]<new_score then
+			register_highscore(high_score[i+1],i)
+			high_score[i+1]=new_score
+			goto endhighscore
+		end
+	end
+	::endhighscore::
 end
 
 -->8
@@ -612,6 +641,16 @@ function draw_player()
 		p.s.x,p.s.y,p.s.w,p.s.h,
 		p.o.x,p.o.y
 	)
+end
+
+function draw_menu()
+	map(32,0,0,0,8,8)
+	if #high_score>0 then
+		print("highscores",70,32)
+		for highscore in all(high_score) do
+			print(highscore)
+		end
+	end
 end
 
 -->8
