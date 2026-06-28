@@ -75,12 +75,16 @@ e_ids={
 }
 
 p_ids={
-	rocket=1,
-	bullet=2,
-	trishooter=3,
+ default=1,
+	rocket=2,
+	bullet=3,
+	tri=4,
+	star=5,
 }
 
 p_dat={
+	[p_ids.default]=function(self)
+	end,
 	[p_ids.rocket]=function(self)
 		self.y+=4
 		
@@ -119,16 +123,19 @@ p_dat={
 	[p_ids.bullet]=function(self)
 		local p=tower.p
 		
-		local y=cos(self.dir+self.rot)*speed.y
-		local x=sin(self.dir+self.rot)
-		if y>-.5*speed.y and y<.5*speed.y then
+		local y=cos(self.dir+self.rot)*speed.y/2
+		local x=sin(self.dir+self.rot)/2
+		if not self.attached and 
+			y>-.2*speed.y and 
+			y<.2*speed.y 
+		then
 			del(tower.e,self)
 		end
 		
 		self.y+=y
 		self.x+=x
 	end,
-	[p_ids.trishooter]=function(self)		
+	[p_ids.tri]=function(self)		
 		if game_time-self.b_last>=self.b_cd then
 			self.b_last=game_time
 			spawn_bullet(self,.25,.20)
@@ -138,7 +145,16 @@ p_dat={
 			spawn_bullet(self,.77,.20)
 			spawn_bullet(self,.79,.20)
 		end
-	end
+	end,
+	[p_ids.star]=function(self)		
+		if game_time-self.b_last>=self.b_cd then
+			self.b_last=game_time
+			spawn_bullet(self,0,0)
+			spawn_bullet(self,.25,0)
+			spawn_bullet(self,.5,0)
+			spawn_bullet(self,.75,0)
+		end
+	end,
 }
 
 e_dat={
@@ -164,7 +180,7 @@ e_dat={
 			w=8,
 			h=8,
 		},
-		attached=false,
+		attached=true,
 		pattern=p_dat[p_ids.bullet],
 		dir=0,
 		rot=0,
@@ -178,12 +194,12 @@ e_dat={
 			h=8,
 		},
 		attached=false,
-		pattern=p_dat[p_ids.trishooter],
+		pattern=p_dat[p_ids.default],
 		spwn_t=0,
 		b_cd=.4,
 		b_last=-99,
 		killable=true,
-		health=10,
+		health=0,
 	},
 }
 
@@ -236,16 +252,20 @@ lvls = {
 		e={},
 		s={
 			[100]=function()
-				spawn_enemy(0,90)
-				spawn_enemy(64,90)
-			end
+				spawn_enemy(0,90,p_ids.tri,10,false)
+				spawn_enemy(64,90,p_ids.tri,10,false)
+			end,
+			[300]=function()
+				spawn_enemy(32,120,p_ids.star,10,true)
+				spawn_enemy(96,120,p_ids.star,10,true)
+			end,
 		},
 	}
 }
 
 tower={}
 speed={
-	x=2,
+	x=1,
 	y=2,
 }
 game_time=0
@@ -332,25 +352,31 @@ end
 
 function spawn_bullet(e,dir,rot)
 	local p=tower.p
-	add(tower.e,new_entity({
+	local bullet=new_entity({
 		id=e_ids.bullet,
 		x=e.x,
 		y=e.y,
 		dir=dir,
 		rot=rot*(game_time-e.spwn_t),
-	}))
+	})
+	bullet.attached=e.attached
+	add(tower.e,bullet)
 end
 
-function spawn_enemy(x,y)
+function spawn_enemy(x,y,p_id,health,attached)
 	local p=tower.p
 	local enemy=new_entity({
 		id=e_ids.enemy,
 		x=x,
 		y=p.y+y,
 	})
+	enemy.pattern=p_dat[p_id]
+	enemy.health=health
+	enemy.attached=attached
 	update_collider(enemy)
 	add(tower.e,enemy)
 end
+
 -->8
 -- draw functions
 
@@ -460,7 +486,7 @@ function update_inputs()
 		mv.x+=1
 	end
 	if btn(❎) then
-		mv.x/=speed.x
+		mv.x/=2
 		spawn_rocket()
 	end
 	
