@@ -69,6 +69,9 @@ b_dat={
 
 e_ids={
 	rocket=1,
+	bullet=2,
+	eturret=3,
+	enemy=4,
 }
 
 e_dat={
@@ -82,6 +85,35 @@ e_dat={
 		attached=false,
 		pattern=function(self)
 			self.y+=4
+		end,
+	},
+	[e_ids.bullet]={
+		s={
+			x=2*8,
+			y=1*8,
+			w=8,
+			h=8,
+		},
+		attached=false,
+		pattern=function(self)
+			self.y-=4
+		end,
+	},
+	[e_ids.enemy]={
+		s={
+			x=4*8,
+			y=0*8,
+			w=8,
+			h=8,
+		},
+		bullet_cd=1,
+		bullet_last=0,
+		attached=false,
+		pattern=function(self)		
+			if game_time-self.bullet_last>=self.bullet_cd then
+				self.bullet_last=game_time
+				spawn_bullet(self.x,self.y,1)
+			end
 		end,
 	},
 }
@@ -158,6 +190,8 @@ function new_entity(e)
 			w=e_dat[e.id].s.w,
 			h=e_dat[e.id].s.h,
 		},
+		bullet_last=e_dat[e.id].bullet_last,
+		bullet_cd=e_dat[e.id].bullet_cd,
 		attached=e_dat[e.id].attached,
 		pattern=e_dat[e.id].pattern,
 		
@@ -205,6 +239,24 @@ function spawn_rocket()
 			y=p.y,
 		}))
 	end
+end
+
+function spawn_bullet(x,y)
+	local p=tower.p
+	add(tower.e,new_entity({
+		id=e_ids.bullet,
+		x=x,
+		y=y,
+	}))
+end
+
+function spawn_enemy()
+	local p=tower.p
+	add(tower.e,new_entity({
+		id=e_ids.enemy,
+		x=p.x,
+		y=p.y+90,
+	}))
 end
 -->8
 -- draw functions
@@ -315,6 +367,9 @@ function update_inputs()
 	end
 	if btn(❎) then
 		spawn_rocket()
+	end
+	if btn(🅾️) then
+		spawn_enemy()
 	end
 	
 	move(mv)
