@@ -49,10 +49,6 @@ function _draw()
 end
 
 function debug()
-	print("",7)
-	print("player pos "..tower.p.x.." "..tower.p.y)
-	print("entities "..#tower.e)
-	print("time "..game_time)
 end
 
 -->8
@@ -90,6 +86,10 @@ s_ids={
 	bullet_b=5,
 	bullet_p=6,
 	bullet_y=7,
+	bullet_0=8,
+	bullet_g=9,
+	bullet_s=10,
+	bullet_h=11,
 }
 
 s_dat={
@@ -135,6 +135,30 @@ s_dat={
 		w=8,
 		h=8,
 	},
+	[s_ids.bullet_0]={
+		x=7*8,
+		y=1*8,
+		w=8,
+		h=8,
+	},
+	[s_ids.bullet_g]={
+		x=8*8,
+		y=1*8,
+		w=8,
+		h=8,
+	},
+	[s_ids.bullet_s]={
+		x=9*8,
+		y=1*8,
+		w=8,
+		h=8,
+	},
+	[s_ids.bullet_h]={
+		x=10*8,
+		y=1*8,
+		w=8,
+		h=8,
+	},
 }
 
 p_ids={
@@ -142,7 +166,9 @@ p_ids={
 	rocket=2,
 	bullet=3,
 	tri=4,
-	star=5,
+	plus=5,
+	cross=6,
+	star=7,
 }
 
 p_dat={
@@ -209,6 +235,24 @@ p_dat={
 			spawn_bullet(self,.79,.20,s_dat[s_ids.bullet_p])
 		end
 	end,
+	[p_ids.plus]=function(self)		
+		if game_time-self.b_last>=self.b_cd then
+			self.b_last=game_time
+			spawn_bullet(self,0,0,s_dat[s_ids.bullet_y])
+			spawn_bullet(self,.25,0,s_dat[s_ids.bullet_y])
+			spawn_bullet(self,.5,0,s_dat[s_ids.bullet_y])
+			spawn_bullet(self,.75,0,s_dat[s_ids.bullet_y])
+		end
+	end,
+	[p_ids.cross]=function(self)		
+		if game_time-self.b_last>=self.b_cd then
+			self.b_last=game_time
+			spawn_bullet(self,.125,0,s_dat[s_ids.bullet_y])
+			spawn_bullet(self,.375,0,s_dat[s_ids.bullet_y])
+			spawn_bullet(self,.625,0,s_dat[s_ids.bullet_y])
+			spawn_bullet(self,.875,0,s_dat[s_ids.bullet_y])
+		end
+	end,
 	[p_ids.star]=function(self)		
 		if game_time-self.b_last>=self.b_cd then
 			self.b_last=game_time
@@ -216,6 +260,11 @@ p_dat={
 			spawn_bullet(self,.25,0,s_dat[s_ids.bullet_y])
 			spawn_bullet(self,.5,0,s_dat[s_ids.bullet_y])
 			spawn_bullet(self,.75,0,s_dat[s_ids.bullet_y])
+			spawn_bullet(self,.125,0,s_dat[s_ids.bullet_y])
+			spawn_bullet(self,.375,0,s_dat[s_ids.bullet_y])
+			spawn_bullet(self,.625,0,s_dat[s_ids.bullet_y])
+			spawn_bullet(self,.875,0,s_dat[s_ids.bullet_y])
+			p_dat[p_ids.cross](self)
 		end
 	end,
 }
@@ -271,14 +320,14 @@ maps={
 
 buildings={
 	default={
-		[8]={1,1,2,2,2,1,1,1},
-		[7]={1,1,1,2,2,2,2,1},
-		[6]={1,1,1,1,1,2,2,1},
-		[5]={2,1,1,1,1,1,2,2},
-		[4]={2,2,1,1,1,1,2,2},
-		[3]={2,2,2,1,1,2,2,1},
-		[2]={1,2,2,2,2,2,2,1},
-		[1]={1,1,2,2,2,1,1,1},
+		[8]={1,1,1,2,1,1,2,1},
+		[7]={2,2,2,2,1,1,2,2},
+		[6]={1,1,1,2,2,2,2,1},
+		[5]={2,2,2,2,2,1,2,2},
+		[4]={1,1,1,1,2,2,2,1},
+		[3]={2,2,2,2,2,1,2,1},
+		[2]={2,1,1,1,2,1,2,1},
+		[1]={2,2,2,2,2,2,2,2},
 	}
 }
 
@@ -302,12 +351,38 @@ lvls = {
 		e={},
 		s={
 			[100]=function()
-				spawn_enemy(0,90,p_ids.tri,10,false)
-				spawn_enemy(64,90,p_ids.tri,10,false)
+				spawn_enemy(0,90,p_ids.tri,10,false,.5)
+				spawn_enemy(64,90,p_ids.tri,10,false,.5)
 			end,
 			[300]=function()
-				spawn_enemy(32,120,p_ids.star,10,true)
-				spawn_enemy(96,120,p_ids.star,10,true)
+				spawn_enemy(32,120,p_ids.plus,10,true,1)
+				spawn_enemy(96,120,p_ids.plus,10,true,1)
+			end,
+			[600]=function()
+				spawn_enemy(0,120,p_ids.cross,10,true,1)
+				spawn_enemy(64,120,p_ids.cross,10,true,1)
+			end,
+			[1000]=function()
+				spawn_enemy(0,90,p_ids.tri,10,false,.5)
+				spawn_enemy(32,90,p_ids.tri,10,false,.5)
+				spawn_enemy(64,90,p_ids.tri,10,false,.5)
+				spawn_enemy(96,90,p_ids.tri,10,false,.5)
+			end,
+			[1500]=function()
+				spawn_enemy(0,120,p_ids.star,10,true,1)
+				spawn_enemy(64,120,p_ids.star,10,true,1)
+			end,
+			[1532]=function()
+				spawn_enemy(32,120,p_ids.star,10,true,1)
+				spawn_enemy(96,120,p_ids.star,10,true,1)
+			end,
+			[1564]=function()
+				spawn_enemy(0,120,p_ids.star,10,true,1)
+				spawn_enemy(64,120,p_ids.star,10,true,1)
+			end,
+			[1596]=function()
+				spawn_enemy(32,120,p_ids.star,10,true,1)
+				spawn_enemy(96,120,p_ids.star,10,true,1)
 			end,
 		},
 	}
@@ -321,9 +396,10 @@ speed={
 game_time=0
 rocket_cooldown=.1
 last_rocket=0
-tower_thickness=2
+tower_thickness=1.5
 
 game_launched=false
+
 -->8
 -- base functions
 
@@ -419,7 +495,7 @@ function spawn_bullet(e,dir,rot,sprite)
 	add(tower.e,bullet)
 end
 
-function spawn_enemy(x,y,p_id,health,attached)
+function spawn_enemy(x,y,p_id,health,attached,cd)
 	local p=tower.p
 	local enemy=new_entity({
 		id=e_ids.enemy,
@@ -429,6 +505,7 @@ function spawn_enemy(x,y,p_id,health,attached)
 	enemy.pattern=p_dat[p_id]
 	enemy.health=health
 	enemy.attached=attached
+	enemy.b_cd=cd
 	update_collider(enemy)
 	add(tower.e,enemy)
 end
@@ -603,14 +680,14 @@ __gfx__
 0080080070777707f9a78a9f76855867788888870000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000070dddd07aa9aa9aa76655667768888670000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000078877887faf99faff778877ffaa77aaf0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-11111111fffffffff777777f1cccccc1f777777ff777777ff000000f000000000000000000000000000000000000000000000000000000000000000000000000
-11111111fff77fff77888877cc1111cc77cccc7777eeee7700aaaa00000000000000000000000000000000000000000000000000000000000000000000000000
-11111111ff7777ff78888887c1c11c1c7cccccc77eeeeee70aaaaaa0000000000000000000000000000000000000000000000000000000000000000000000000
-11111111ff6666ff78888887c11cc11c7cccccc77eeeeee70aaaaaa0000000000000000000000000000000000000000000000000000000000000000000000000
-11111111ff8787ff78888887c11cc11c7cccccc77eeeeee70aaaaaa0000000000000000000000000000000000000000000000000000000000000000000000000
-11111111ff7878ff78888887c1c11c1c7cccccc77eeeeee70aaaaaa0000000000000000000000000000000000000000000000000000000000000000000000000
-11111111ff8787ff77888877cc1111cc77cccc7777eeee7700aaaa00000000000000000000000000000000000000000000000000000000000000000000000000
-11111111ff9999fff777777f1cccccc1f777777ff777777ff000000f000000000000000000000000000000000000000000000000000000000000000000000000
+11111111ffffffffffffffff1cccccc1ffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000
+11111111fff77fffff8888ffcc1111ccffccccffffeeeeffffaaaaffff9999ffff6666ffffddddffffbbbbff0000000000000000000000000000000000000000
+11111111ff7777fff887788fc1c11c1cfcc77ccffee77eeffaa77aaff997799ff667766ffdd77ddffbbbbbbf0000000000000000000000000000000000000000
+11111111ff6666fff877778fc11cc11cfc7777cffe7777effa7777aff977779ff677776ffd7777dffbbbbbbf0000000000000000000000000000000000000000
+11111111ff8787fff877778fc11cc11cfc7777cffe7777effa7777aff977779ff677776ffd7777dffbbbbbbf0000000000000000000000000000000000000000
+11111111ff7878fff887788fc1c11c1cfcc77ccffee77eeffaa77aaff997799ff667766ffdd77ddffbbbbbbf0000000000000000000000000000000000000000
+11111111ff8787ffff8888ffcc1111ccffccccffffeeeeffffaaaaffff9999ffff6666ffffddddffffbbbbff0000000000000000000000000000000000000000
+11111111ff9999ffffffffff1cccccc1ffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000
 11111111111111111111111111111111111111111111111111111111111111111111111100000000000000000000000000000000000000000000000000000000
 111111111111000111111111111100011111111111111111111111111111111111111111000000000000000000000000000000000000000000000000099a9900
 1111111111110a011111111111110a0100000000000000000000011100000111011111110000000000000000000000000000000000000000000000000999a900
