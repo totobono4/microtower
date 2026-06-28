@@ -14,6 +14,7 @@ function _update()
 	game_time = time()
 
 	update_inputs()
+	update_events()
 	update_entities()
 	
 	if hit() then
@@ -73,6 +74,51 @@ e_ids={
 	enemy=4,
 }
 
+p_ids={
+	rocket=1,
+	bullet=2,
+}
+
+p_dat={
+	[p_ids.rocket]=function(self)
+		self.y+=4
+		
+		local collided=false
+		for e in all(tower.e) do
+			if e==self then
+				goto skiprocketcollide
+			end
+			if e.id!=e_ids.enemy then
+				goto skiprocketcollide
+			end
+			if self.xmin<e.xmax and
+						self.xmax>e.xmin and
+						self.ymin<e.ymax and
+						self.ymax>e.ymin
+			then
+				del(tower.e, e)
+				collided=true
+			end
+			::skiprocketcollide::
+		end
+		if collided then
+			del(tower.e,self)
+		end
+	end,
+	[p_ids.bullet]=function(self)
+		local p=tower.p
+		
+		local y=cos(self.dir+self.rot)*speed.y
+		local x=sin(self.dir+self.rot)
+		if y>-.2 and y<.2 then
+			del(tower.e,self)
+		end
+		
+		self.y+=y
+		self.x+=x
+	end,
+}
+
 e_dat={
 	[e_ids.rocket]={
 		s={
@@ -82,9 +128,11 @@ e_dat={
 			h=8,
 		},
 		attached=false,
-		pattern=function(self)
-			self.y+=4
-		end,
+		pattern=p_dat[p_ids.rocket],
+		xmin=0,
+		xmax=0,
+		ymin=0,
+		ymax=0,
 	},
 	[e_ids.bullet]={
 		s={
@@ -94,24 +142,7 @@ e_dat={
 			h=8,
 		},
 		attached=false,
-		pattern=function(self)
-			local p=tower.p
-			if self.y-p.y+(128-p.o.y)<0 then
-				del(tower.e,self)
-			end
-			if self.y-p.y>128 then
-				del(tower.e,self)
-			end
-			
-			local y=cos(self.dir+self.rot)*speed.y
-			local x=sin(self.dir+self.rot)
-			if y>-.1 and y<.1 then
-				del(tower.e,self)
-			end
-			
-			self.y+=y
-			self.x+=x
-		end,
+		pattern=p_dat[p_ids.bullet],
 		dir=0,
 		rot=0,
 	},
@@ -126,12 +157,12 @@ e_dat={
 		pattern=function(self)		
 			if game_time-self.b_last>=self.b_cd then
 				self.b_last=game_time
-				spawn_bullet(self,.25,.15)
-				spawn_bullet(self,.27,.15)
-				spawn_bullet(self,.29,.15)
-				spawn_bullet(self,.75,.15)
-				spawn_bullet(self,.77,.15)
-				spawn_bullet(self,.79,.15)
+				spawn_bullet(self,.25,.20)
+				spawn_bullet(self,.27,.20)
+				spawn_bullet(self,.29,.20)
+				spawn_bullet(self,.75,.20)
+				spawn_bullet(self,.77,.20)
+				spawn_bullet(self,.79,.20)
 			end
 		end,
 		spwn_t=0,
@@ -186,7 +217,11 @@ lvls = {
 		p=players.default,
 		m=maps.void,
 		b=buildings.default,
-		e={
+		e={},
+		s={
+			[100]=function()
+				spawn_enemy()
+			end
 		},
 	}
 }
@@ -243,7 +278,9 @@ function load_level(n)
 		m=lvls[n+1].m,
 		b={unpack(lvls[n+1].b)},
 		e=entities,
+		s=lvls[n+1].s,
 	}
+	
 end
 
 -->8
@@ -264,11 +301,12 @@ function spawn_rocket()
 	local p=tower.p
 	if game_time-last_rocket>=rocket_cooldown then
 		last_rocket=game_time
-		add(tower.e,new_entity({
+		local rocket=new_entity({
 			id=e_ids.rocket,
 			x=p.x,
-			y=p.y,
-		}))
+			y=p.y+e_dat[e_ids.rocket].s.h,
+		})
+		add(tower.e,rocket)
 	end
 end
 
@@ -285,11 +323,13 @@ end
 
 function spawn_enemy()
 	local p=tower.p
-	add(tower.e,new_entity({
+	local enemy=new_entity({
 		id=e_ids.enemy,
 		x=p.x,
 		y=p.y+90,
-	}))
+	})
+	update_collider(enemy)
+	add(tower.e,enemy)
 end
 -->8
 -- draw functions
@@ -402,19 +442,42 @@ function update_inputs()
 		mv.x/=speed.x
 		spawn_rocket()
 	end
-	if btn(🅾️) then
-		spawn_enemy()
-	end
 	
 	move(mv)
 end
 
 function update_entities()
+	local p=tower.p
 	for e in all(tower.e) do
+		if e.y-p.y+(128-p.o.y)<0 then
+			del(tower.e,e)
+			goto skipupdateentity
+		end
+		if e.y-p.y>128 then
+			del(tower.e,e)
+			goto skipupdateentity
+		end
 		if not e.attached then
 			e.y+=1*speed.y
 		end
+		update_collider(e)
 		e.pattern(e)
+		::skipupdateentity::
+	end
+end
+
+function update_collider(e)
+	e.xmin=e.x
+	e.xmax=e.x+(e.s.w/2)
+	e.ymin=e.y
+	e.ymax=e.y+e.s.y
+end
+
+function update_events()
+	local p=tower.p
+	local s=tower.s
+	if tower.s[p.y]!=nil then
+		tower.s[p.y]()
 	end
 end
 __gfx__
