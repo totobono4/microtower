@@ -29,17 +29,12 @@ function _draw()
 end
 
 function debug()
-	print("",8)
+	print("",7)
 	print("player pos "..tower.p.x.." "..tower.p.y)
 	print("entities "..#tower.e)
 	print("time "..game_time)
-	
-	//for e in all(tower.e) do
-	//	if e.id == e_ids.spikes then
-	//		print("spikes x"..e.x.." y"..e.y)
-	//	end
-	//end
 end
+
 -->8
 -- consts
 
@@ -86,6 +81,10 @@ e_dat={
 		pattern=function(self)
 			self.y+=4
 		end,
+		bullets={
+			cd=0,
+			last=0,
+		}
 	},
 	[e_ids.bullet]={
 		s={
@@ -98,6 +97,10 @@ e_dat={
 		pattern=function(self)
 			self.y-=4
 		end,
+		bullets={
+			cd=1,
+			last=0,
+		}
 	},
 	[e_ids.enemy]={
 		s={
@@ -106,15 +109,17 @@ e_dat={
 			w=8,
 			h=8,
 		},
-		bullet_cd=1,
-		bullet_last=0,
 		attached=false,
 		pattern=function(self)		
-			if game_time-self.bullet_last>=self.bullet_cd then
-				self.bullet_last=game_time
+			if game_time-self.bullets.last>=self.bullets.cd then
+				self.bullets.last=game_time
 				spawn_bullet(self.x,self.y,1)
 			end
 		end,
+		bullets={
+			cd=1,
+			last=0,
+		}
 	},
 }
 
@@ -172,7 +177,7 @@ lvls = {
 tower={}
 speed={
 	x=2,
-	y=3,
+	y=2,
 }
 game_time=0
 rocket_cooldown=.1
@@ -190,8 +195,10 @@ function new_entity(e)
 			w=e_dat[e.id].s.w,
 			h=e_dat[e.id].s.h,
 		},
-		bullet_last=e_dat[e.id].bullet_last,
-		bullet_cd=e_dat[e.id].bullet_cd,
+		bullets={
+			cd=e_dat[e.id].bullets.cd,
+			last=e_dat[e.id].bullets.last,
+		},
 		attached=e_dat[e.id].attached,
 		pattern=e_dat[e.id].pattern,
 		
@@ -366,6 +373,7 @@ function update_inputs()
 		mv.x+=1
 	end
 	if btn(❎) then
+		mv.x/=2.5
 		spawn_rocket()
 	end
 	if btn(🅾️) then
