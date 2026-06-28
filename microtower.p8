@@ -372,6 +372,18 @@ players={
 	}
 }
 
+hp={
+	t=5,
+	e=5,
+}
+
+cd={
+	slow=2,
+	med=1,
+	fast=.5,
+	ult=.25,
+}
+
 lvls = {
 	[1] = {
 		p=players.default,
@@ -380,38 +392,50 @@ lvls = {
 		e={},
 		s={
 			[100]=function()
-				spawn_enemy(0,90,p_ids.tri,10,false,.5)
-				spawn_enemy(64,90,p_ids.tri,10,false,.5)
-			end,
+				spawn_enemy(0,90,p_ids.plus,hp.e,false,cd.fast)			end,
 			[300]=function()
-				spawn_enemy(32,120,p_ids.plus,10,true,1)
-				spawn_enemy(96,120,p_ids.plus,10,true,1)
+				spawn_enemy(32,120,p_ids.plus,hp.t,true,cd.med)
+				spawn_enemy(96,120,p_ids.plus,hp.t,true,cd.med)
+			end,
+			[500]=function()
+				spawn_enemy(0,120,p_ids.cross,hp.t,true,cd.med)
+				spawn_enemy(64,120,p_ids.cross,hp.t,true,cd.med)
+			end,
+			[550]=function()
+				spawn_enemy(0,90,p_ids.tri,hp.e,false,cd.slow)
+				spawn_enemy(32,90,p_ids.tri,hp.e,false,cd.slow)
+				spawn_enemy(64,90,p_ids.tri,hp.e,false,cd.slow)
+				spawn_enemy(96,90,p_ids.tri,hp.e,false,cd.slow)
 			end,
 			[600]=function()
-				spawn_enemy(0,120,p_ids.cross,10,true,1)
-				spawn_enemy(64,120,p_ids.cross,10,true,1)
+				spawn_enemy(32,120,p_ids.plus,hp.t,true,cd.med)
+				spawn_enemy(96,120,p_ids.plus,hp.t,true,cd.med)
+			end,
+			[700]=function()
+				spawn_enemy(16,120,p_ids.tri,hp.t,true,cd.med)
+				spawn_enemy(48,120,p_ids.tri,hp.t,true,cd.med)
+				spawn_enemy(80,120,p_ids.tri,hp.t,true,cd.med)
+				spawn_enemy(112,120,p_ids.tri,hp.t,true,cd.med)
 			end,
 			[1000]=function()
-				spawn_enemy(0,90,p_ids.tri,10,false,.5)
-				spawn_enemy(32,90,p_ids.tri,10,false,.5)
-				spawn_enemy(64,90,p_ids.tri,10,false,.5)
-				spawn_enemy(96,90,p_ids.tri,10,false,.5)
+				spawn_enemy(16,90,p_ids.tri,hp.t,false,cd.fast)
+				spawn_enemy(80,90,p_ids.tri,hp.t,false,cd.fast)
 			end,
-			[1500]=function()
-				spawn_enemy(0,120,p_ids.star,10,true,1)
-				spawn_enemy(64,120,p_ids.star,10,true,1)
+			[1200]=function()
+				spawn_enemy(10,90,p_ids.tri,hp.t,false,cd.fast)
+				spawn_enemy(74,90,p_ids.tri,hp.t,false,cd.fast)
 			end,
-			[1532]=function()
-				spawn_enemy(32,120,p_ids.star,10,true,1)
-				spawn_enemy(96,120,p_ids.star,10,true,1)
+			[1732]=function()
+				spawn_enemy(32,120,p_ids.star,hp.t,true,cd.med)
+				spawn_enemy(96,120,p_ids.star,hp.t,true,cd.med)
 			end,
-			[1564]=function()
-				spawn_enemy(0,120,p_ids.star,10,true,1)
-				spawn_enemy(64,120,p_ids.star,10,true,1)
+			[1764]=function()
+				spawn_enemy(0,120,p_ids.star,hp.t,true,cd.med)
+				spawn_enemy(64,120,p_ids.star,hp.t,true,cd.med)
 			end,
-			[1596]=function()
-				spawn_enemy(32,120,p_ids.star,10,true,1)
-				spawn_enemy(96,120,p_ids.star,10,true,1)
+			[1796]=function()
+				spawn_enemy(32,120,p_ids.star,hp.t,true,cd.med)
+				spawn_enemy(96,120,p_ids.star,hp.t,true,cd.med)
 			end,
 		},
 		particles={}
@@ -426,7 +450,7 @@ speed={
 game_time=0
 rocket_cooldown=.1
 last_rocket=0
-tower_thickness=1.5
+tower_thickness=2
 
 game_launched=false
 
