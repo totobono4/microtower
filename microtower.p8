@@ -391,7 +391,7 @@ lvls = {
 		b=buildings.default,
 		e={},
 		s={
-			[100]=function()
+			[10]=function()
 				spawn_enemy(0,90,p_ids.plus,hp.e,false,cd.fast)			end,
 			[300]=function()
 				spawn_enemy(32,120,p_ids.plus,hp.t,true,cd.med)
@@ -434,8 +434,36 @@ lvls = {
 				spawn_enemy(64,120,p_ids.star,hp.t,true,cd.med)
 			end,
 			[1796]=function()
-				spawn_enemy(32,120,p_ids.star,hp.t,true,cd.med)
-				spawn_enemy(96,120,p_ids.star,hp.t,true,cd.med)
+				spawn_enemy(64,120,p_ids.cross,hp.t,true,cd.med)
+				spawn_enemy(0,120,p_ids.cross,hp.t,true,cd.med)
+			end,
+			[1828]=function()
+				spawn_enemy(32,120,p_ids.plus,hp.t,true,cd.med)
+				spawn_enemy(96,120,p_ids.plus,hp.t,true,cd.med)
+			end,
+			[1860]=function()
+				spawn_enemy(64,120,p_ids.cross,hp.t,true,cd.med)
+				spawn_enemy(0,120,p_ids.cross,hp.t,true,cd.med)
+			end,
+			[1892]=function()
+				spawn_enemy(32,120,p_ids.plus,hp.t,true,cd.med)
+				spawn_enemy(96,120,p_ids.plus,hp.t,true,cd.med)
+			end,
+			[2120]=function()
+				spawn_enemy(24,90,p_ids.tri,hp.t,false,cd.fast)
+				spawn_enemy(72,90,p_ids.tri,hp.t,false,cd.fast)
+			end,
+			[2200]=function()
+				spawn_enemy(16,120,p_ids.cross,hp.t,true,cd.fast)
+				spawn_enemy(48,120,p_ids.cross,hp.t,true,cd.fast)
+				spawn_enemy(80,120,p_ids.cross,hp.t,true,cd.fast)
+				spawn_enemy(112,120,p_ids.cross,hp.t,true,cd.fast)
+			end,
+			[2150]=function()
+				spawn_enemy(0,120,p_ids.cross,hp.t,true,cd.fast)
+				spawn_enemy(32,120,p_ids.cross,hp.t,true,cd.fast)
+				spawn_enemy(64,120,p_ids.cross,hp.t,true,cd.fast)
+				spawn_enemy(96,120,p_ids.cross,hp.t,true,cd.fast)
 			end,
 		},
 		particles={}
