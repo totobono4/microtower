@@ -77,6 +77,7 @@ e_ids={
 p_ids={
 	rocket=1,
 	bullet=2,
+	trishooter=3,
 }
 
 p_dat={
@@ -88,7 +89,7 @@ p_dat={
 			if e==self then
 				goto skiprocketcollide
 			end
-			if e.id!=e_ids.enemy then
+			if not e.killable then
 				goto skiprocketcollide
 			end
 			if self.xmin<e.xmax and
@@ -110,13 +111,24 @@ p_dat={
 		
 		local y=cos(self.dir+self.rot)*speed.y
 		local x=sin(self.dir+self.rot)
-		if y>-.2 and y<.2 then
+		if y>-.5 and y<.5 then
 			del(tower.e,self)
 		end
 		
 		self.y+=y
 		self.x+=x
 	end,
+	[p_ids.trishooter]=function(self)		
+		if game_time-self.b_last>=self.b_cd then
+			self.b_last=game_time
+			spawn_bullet(self,.25,.20)
+			spawn_bullet(self,.27,.20)
+			spawn_bullet(self,.29,.20)
+			spawn_bullet(self,.75,.20)
+			spawn_bullet(self,.77,.20)
+			spawn_bullet(self,.79,.20)
+		end
+	end
 }
 
 e_dat={
@@ -133,6 +145,7 @@ e_dat={
 		xmax=0,
 		ymin=0,
 		ymax=0,
+		killable=false,
 	},
 	[e_ids.bullet]={
 		s={
@@ -145,6 +158,7 @@ e_dat={
 		pattern=p_dat[p_ids.bullet],
 		dir=0,
 		rot=0,
+		killable=false,
 	},
 	[e_ids.enemy]={
 		s={
@@ -154,20 +168,11 @@ e_dat={
 			h=8,
 		},
 		attached=false,
-		pattern=function(self)		
-			if game_time-self.b_last>=self.b_cd then
-				self.b_last=game_time
-				spawn_bullet(self,.25,.20)
-				spawn_bullet(self,.27,.20)
-				spawn_bullet(self,.29,.20)
-				spawn_bullet(self,.75,.20)
-				spawn_bullet(self,.77,.20)
-				spawn_bullet(self,.79,.20)
-			end
-		end,
+		pattern=p_dat[p_ids.trishooter],
 		spwn_t=0,
 		b_cd=.4,
 		b_last=-99,
+		killable=true,
 	},
 }
 
@@ -220,7 +225,10 @@ lvls = {
 		e={},
 		s={
 			[100]=function()
-				spawn_enemy()
+				spawn_enemy(0,90)
+				spawn_enemy(32,90)
+				spawn_enemy(64,90)
+				spawn_enemy(92,90)
 			end
 		},
 	}
@@ -258,6 +266,8 @@ function new_entity(e)
 		
 		x=e.x,
 		y=e.y,
+		
+		killable=e_dat[e.id].killable,
 	}
 end
 
@@ -289,7 +299,7 @@ end
 function move(mv)
 	tower.p.x+=mv.x*speed.x
 	tower.p.x%=256
-	tower.p.y+=1*speed.y
+	tower.p.y+=(1*speed.y)
 end
 
 function hit()
@@ -321,12 +331,12 @@ function spawn_bullet(e,dir,rot)
 	}))
 end
 
-function spawn_enemy()
+function spawn_enemy(x,y)
 	local p=tower.p
 	local enemy=new_entity({
 		id=e_ids.enemy,
-		x=p.x,
-		y=p.y+90,
+		x=x,
+		y=p.y+y,
 	})
 	update_collider(enemy)
 	add(tower.e,enemy)
@@ -430,6 +440,7 @@ end
 function update_inputs()
 	local mv = {
 		x=0,
+		y=0,
 	}
 
 	if btn(⬅️) then
