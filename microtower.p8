@@ -104,7 +104,10 @@ p_dat={
 				self.ymax>e.ymin
 				)
 			then
-				del(tower.e, e)
+				e.health-=1
+				if e.health<=0 then
+					del(tower.e,e)
+				end
 				collided=true
 			end
 			::skiprocketcollide::
@@ -180,6 +183,7 @@ e_dat={
 		b_cd=.4,
 		b_last=-99,
 		killable=true,
+		health=10,
 	},
 }
 
@@ -273,6 +277,7 @@ function new_entity(e)
 		y=e.y,
 		
 		killable=e_dat[e.id].killable,
+		health=e_dat[e.id].health,
 	}
 end
 
