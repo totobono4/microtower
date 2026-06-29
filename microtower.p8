@@ -865,7 +865,7 @@ function draw_score()
 			c=10
 		end
 	end
-	print("score "..score,90,0,c)
+	print("score "..score,1,1,c)
 end
 
 function draw_menu()
